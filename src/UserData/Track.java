@@ -1,14 +1,18 @@
 package UserData;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.faces.bean.ManagedBean;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @ManagedBean
@@ -27,8 +31,8 @@ public class Track implements Serializable {
 	private String title;
 	@Column
 	private String artist;
-	@ManyToOne
-	private User user;	
+	@ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+	private List<User> users = new ArrayList<User>();	
 	
 	// ----- Constructor ------------------------
 	
@@ -40,7 +44,15 @@ public class Track implements Serializable {
 	
 	@Override
 	public String toString() {
-		return "Track [id: " + id + ", title: " + title + ", artist: " + artist + ", user: " + user + "]";
+		String returnString = "Track " 
+								+ "\n\t id: " + id 
+								+ "\n\t title: " + title 
+								+ "\n\t artist: " + artist 
+								+ "\n\t user: \n\t\t";
+		for(User user : users) {
+			returnString += user.getUsername() + "\n\t\t";
+		}
+		return returnString;
 	}
 	
 	// ----- Getters and Setters ----------------
@@ -61,14 +73,18 @@ public class Track implements Serializable {
 		this.artist = artist;
 	}
 
-	public User getUser() {
-		return user;
+	public List<User> getUsers() {
+		return users;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setUsers(List<User> users) {
+		this.users = users;
 	}
-	
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public Long getId() {
 		return id;
 	}

@@ -32,14 +32,20 @@ public class TrackDAO{
     public void edit(Long id, Track newTrack) {
     	Track oldTrack = em.find(Track.class, id);
     	oldTrack.setTitle(newTrack.getTitle());
-    	oldTrack.setArtist(newTrack.getArtist());
-    	oldTrack.setUser(newTrack.getUser());  	
+    	oldTrack.setArtist(newTrack.getArtist());	
     }
     
     // ----- Delete -----
     public void delete(Long id) {
     	em.remove(em.find(Track.class, id));
     }
+	
+	// ----- MISC -------------------------------
+	
+    // ----- Merge -----
+    public void merge(Track track) {
+    	em.merge(track);
+    }    
     
     // ----- List -----
     @SuppressWarnings("unchecked")

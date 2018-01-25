@@ -21,7 +21,7 @@ public class PostmanRequest {
     private UserDAO userDao;
 	@EJB
     private TrackDAO trackDao;
-    
+ 
 	// ----- TEST -------------------------------
 	
     @GET
@@ -36,52 +36,49 @@ public class PostmanRequest {
     // ----- User -----
     @POST
     @Path("addU/{username}/{email}/{password}")
-    @Produces("application/json")
-    public User addUser(@PathParam("username") String username, @PathParam("email") String email, @PathParam("password") String password) {
+    @Produces("text/html")
+    public String addUser(@PathParam("username") String username, @PathParam("email") String email, @PathParam("password") String password) {
+    	System.out.println("Creating User " + username);
     	User user = new User();
     	user.setUsername(username);
     	user.setEmail(email);
     	user.setPassword(password);
         userDao.add(user);
-        return showUser(username);
+        return "User - " + username + " - was created.";
     }
     // ----- Track -----
     @POST
-    @Path("addT/{title}/{artist}/{user}")
-    @Produces("application/json")
-    public Track addTrack(@PathParam("title") String title, @PathParam("artist") String artist, @PathParam("userId") Long id) {
+    @Path("addT/{title}/{artist}")
+    @Produces("text/html")
+    public String addTrack(@PathParam("title") String title, @PathParam("artist") String artist) {
+    	System.out.println("Creating Track " + title);
     	Track track = new Track();
     	track.setTitle(title);
     	track.setArtist(artist);
-    	track.setUser(userDao.read(id));
         trackDao.add(track);
-        return showTrack(title);
+        return "Track - " + title + " - was created";
     }
     
     // ----- READ -------------------------------
 	
     // ----- User -----
     @GET
-    @Path("showU/{username}")
-    @Produces("application/json")
-    public User showUser(@PathParam("username") String username) {
-    	User userReturn = new User();
-        for(User user : userDao.list()) {
-        	if(user.getUsername().equals(username)) { userReturn = user; }
-        }
-        return userReturn;
+    @Path("showU/{id}")
+    @Produces("text/html")
+    public String showUser(@PathParam("id") Long id) {
+    	System.out.println("Retrieving User N°" + id);
+    	User user = userDao.read(id);
+        return user.toString();
     }
     
     // ----- Track -----
     @GET
-    @Path("showT/{title}")
-    @Produces("application/json")
-    public Track showTrack(@PathParam("title") String title) {
-    	Track track = new Track();
-        for(Track trackL : trackDao.list()) {
-        	if(track.getTitle().equals(title)) { return track = trackL; }
-        }
-        return track;
+    @Path("showT/{id}")
+    @Produces("text/html")
+    public String showTrack(@PathParam("id") Long id) {
+    	System.out.println("Retrieving Track N°" + id);
+    	Track track = trackDao.read(id);
+        return track.toString();
     }
     
     // ----- UPDATE -----------------------------
@@ -89,28 +86,30 @@ public class PostmanRequest {
     // ----- User -----
     @PUT
     @Path("updateU/{id}{username}/{email}/{password}")
-    @Produces("application/json")
-    public User updateUser(@PathParam("id") Long id, @PathParam("username") String username, @PathParam("email") String email, @PathParam("password") String password) {
+    @Produces("text/html")
+    public String updateUser(@PathParam("id") Long id, @PathParam("username") String username, @PathParam("email") String email, @PathParam("password") String password) {
+    	System.out.println("Updating User N°" + id);
     	User user = new User();
     	user.setUsername(username);
     	user.setEmail(email);
     	user.setPassword(password);
         userDao.edit(id, user);
-        return showUser(username);
+        return username.toString();
     }
     
     // ----- Track -----
     @PUT
-    @Path("addT/{id}/{title}/{artist}/{user}")
-    @Produces("application/json")
-    public Track updateTrack(@PathParam("id") Long id, @PathParam("title") String title, @PathParam("artist") String artist, @PathParam("userId") Long userId) {
+    @Path("addT/{id}/{title}/{artist}")
+    @Produces("text/html")
+    public String updateTrack(@PathParam("id") Long id, @PathParam("title") String title, @PathParam("artist") String artist) {
+    	System.out.println("Updating Track N°" + id);
     	Track track = new Track();
     	track.setTitle(title);
     	track.setArtist(artist);
-    	track.setUser(userDao.read(userId));
         trackDao.edit(id, track);
-        return showTrack(title);
+        return track.toString();
     }
+    
 	// ----- DELETE -----------------------------
 	
     // ----- User -----
@@ -118,8 +117,9 @@ public class PostmanRequest {
     @Path("deleteU/{id}")
     @Produces("text/html")
     public String deleteUser(@PathParam("id") Long id) {
+    	System.out.println("Deleting User N°" + id);
     	userDao.delete(id);
-        return "User was deleted.";
+        return "User N°" + id + " was deleted.";
     }
     
     // ----- Track -----
@@ -127,21 +127,108 @@ public class PostmanRequest {
     @Path("deleteT/{id}")
     @Produces("text/html")
     public String deleteTrack(@PathParam("id") Long id) {
+    	System.out.println("Deleting Track N°" + id);
     	trackDao.delete(id);
-        return "Track was deleted.";
+        return "Track N°" + id + "  was deleted.";
     }
     
-  	// ----- ADD Track TO User -----------------------------
+  	// ----- ADD/DEL Track TO/FROM User --------------
 	  
-    // ----- Track -----
+    // ----- ADD Track -----
     @PUT
-    @Path("addT2U/{idUser}/{idTrack}")
+    @Path("addT2U/{idTrack}/{idUser}")
     @Produces("application/json")
-    public String addT2U(@PathParam("idUser") Long idUser, @PathParam("idTrack") Long idTrack) {
-    	User user = userDao.read(idUser);
-    	user.getTracks().add(trackDao.read(idTrack));
-        return trackDao.read(idTrack).getTitle() + " was added to " + user.getUsername();
+    public String addT2U(@PathParam("idTrack") Long idTrack, @PathParam("idUser") Long idUser) {
+    	System.out.println("Retrieving Track N°" + idTrack + " for User N°" +  idUser);
+    	User user	= userDao.read(idUser);
+    	Track track	= trackDao.read(idTrack);
+    	System.out.println("Adding Track N°" + idTrack + ": '" + track.getTitle() + "' to User N°" +  idUser + ": '" + user.getUsername() + "'");
+    	user.getTracks().add(track);
+    	track.getUsers().add(user);
+    	userDao.merge(user);
+    	trackDao.merge(track);
+        return track.getTitle() + " was added to " + user.getUsername();
     }
-     
+    
+    // ----- DEL Track -----
+    @PUT
+    @Path("delT2U/{idTrack}/{idUser}")
+    @Produces("application/json")
+    public String delT2U(@PathParam("idTrack") Long idTrack, @PathParam("idUser") Long idUser) {
+    	System.out.println("Retrieving Track N°" + idTrack + " for User N°" +  idUser);
+    	User user 	= userDao.read(idUser);
+    	Track track = trackDao.read(idTrack);
+    	System.out.println("Deleting Track N°" + idTrack + ": '" + track.getTitle() + "' from User N°" +  idUser + ": '" + user.getUsername() + "'");
+    	user.getTracks().remove(user.getTracks().indexOf(track));
+    	track.getUsers().remove(track.getUsers().indexOf(user));
+    	userDao.merge(user);
+    	trackDao.merge(track);
+        return track.getTitle() + " was removed from " + user.getUsername();
+    }   
+    
+    // ----- ADD/DEL User TO/FROM Track --------------
+	  
+    // ----- ADD User -----
+    @PUT
+    @Path("addU2T/{idUser}/{idTrack}")
+    @Produces("application/json")
+    public String addU2T(@PathParam("idUser") Long idUser, @PathParam("idTrack") Long idTrack) {
+    	System.out.println("Adding User N°" + idUser + " to Track N°" +  idTrack);
+    	User user	= userDao.read(idUser);
+    	Track track	= trackDao.read(idTrack);
+    	System.out.println("Adding  User N°" +  idUser + ": '" + user.getUsername() + "' to Track N°" + idTrack + ": '" + track.getTitle() + "'");
+    	user.getTracks().add(track);
+    	track.getUsers().add(user);
+    	userDao.merge(user);
+    	trackDao.merge(track);
+        return user.getUsername() + " was added to " + track.getTitle();
+    }
+    
+    // ----- DEL User -----
+    @PUT
+    @Path("delU2T/{idUser}/{idTrack}")
+    @Produces("application/json")
+    public String delU2T(@PathParam("idUser") Long idUser, @PathParam("idTrack") Long idTrack) {
+    	System.out.println("Deleting User N°" +  idUser + " from Track N°" + idTrack);
+    	User user 	= userDao.read(idUser);
+    	Track track = trackDao.read(idTrack);
+    	System.out.println("Deleting  User N°" +  idUser + ": '" + user.getUsername() + "' from Track N°" + idTrack + ": '" + track.getTitle() + "'");
+    	user.getTracks().remove(user.getTracks().indexOf(track));
+    	track.getUsers().remove(track.getUsers().indexOf(user));
+    	userDao.merge(user);
+    	trackDao.merge(track);
+        return user.getUsername() + " was removed from " + track.getTitle();
+    }   
+  
+  	// ----- LIST -------------------------------
+	  
+    // ----- User -----
+    @GET
+    @Path("listU")
+    @Produces("text/html")
+    public String listUser() {
+    	System.out.println("Listing Users");
+    	String userList = "";
+    	for(User user : userDao.list()) {
+    		userList += user.toString();
+    		userList += "\n";
+    	}
+        return userList;
+    }
+    
+    // ----- Track -----
+    @GET
+    @Path("listT")
+    @Produces("text/html")
+    public String listTrack() {
+    	System.out.println("Listing Tracks");
+    	String trackList = "";
+    	for(Track track : trackDao.list()) {
+    		trackList += track.toString();
+    		trackList += "\n";
+    	}
+        return trackList;
+    }
+    
 }
 

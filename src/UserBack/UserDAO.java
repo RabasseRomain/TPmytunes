@@ -6,6 +6,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import UserData.Track;
 import UserData.User;
 
 @Stateless
@@ -15,7 +16,7 @@ public class UserDAO{
 	
     @PersistenceContext(unitName = "TPmytunes")
     private EntityManager em;
-	
+    
 	// ----- CRUD -------------------------------
 	
     // ----- Create -----
@@ -40,10 +41,34 @@ public class UserDAO{
     public void delete(Long id) {
     	em.remove(em.find(User.class, id));
     }
+	
+	// ----- MISC -------------------------------
+	
+    // ----- Merge -----
+    public void merge(User user) {
+    	em.merge(user);
+    }
     
     // ----- List -----
     @SuppressWarnings("unchecked")
 	public List<User> list() {
 		return em.createQuery("SELECT u FROM User u").getResultList();
 	}
+    
+    // ----- Add Track -----
+    public void addT(Long idUser, Long idTrack) {
+    	User user	= read(idUser);
+    	Track track	= em.find(Track.class, idTrack);
+    	user.getTracks().add(track);
+    	track.getUsers().add(user);
+    }
+    
+    // ----- Del Track -----
+    public void delT(Long idUser, Long idTrack) {
+    	User user 	= read(idUser);
+    	Track track = em.find(Track.class, idTrack);
+    	user.getTracks().remove(user.getTracks().indexOf(track));
+    	track.getUsers().remove(track.getUsers().indexOf(user));
+    }
+    
 }

@@ -1,15 +1,18 @@
 package UserData;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @ManagedBean
@@ -30,8 +33,8 @@ public class User implements Serializable {
 	private String email;
 	@Column
 	private String password;
-	@OneToMany(mappedBy = "user")
-	private List<Track> Tracks;	
+	@ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+	private List<Track> tracks = new ArrayList<Track>();	
 	
 	// ----- Constructor ------------------------
 	
@@ -43,7 +46,16 @@ public class User implements Serializable {
 	
 	@Override
 	public String toString() {
-		return "User [id: " + id + ", username: " + username + ", email: " + email + ", password: " + password + ", Tracks: " + Tracks + "]";
+		String returnString = "User " 
+								+ "\n\t id: " + id 
+								+ "\n\t username: " + username 
+								+ "\n\t email: " + email 
+								+ "\n\t password: " + password 
+								+ "\n\t Tracks: \n\t\t";
+		for(Track track : tracks) {
+			returnString += track.getTitle() + "\n\t\t";
+		}
+		return returnString;
 	}
 	
 	// ----- Getters and Setters ----------------
@@ -73,11 +85,11 @@ public class User implements Serializable {
 	}
 	
 	public List<Track> getTracks() {
-		return Tracks;
+		return tracks;
 	}
 
 	public void setTracks(List<Track> tracks) {
-		Tracks = tracks;
+		this.tracks = tracks;
 	}
 
 	public static long getSerialversionuid() {
@@ -86,6 +98,10 @@ public class User implements Serializable {
 
 	public Long getId() {
 		return id;
+	}
+	
+	public void setId(Long id) {
+		this.id = id;
 	}
 	
 }
