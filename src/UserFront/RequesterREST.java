@@ -15,7 +15,7 @@ import UserBack.UserDAO;
 import UserBack.TrackDAO;
 
 @Path("MyTunes")
-public class PostmanRequest {
+public class RequesterREST {
 	
 	@EJB
     private UserDAO userDao;
@@ -137,13 +137,14 @@ public class PostmanRequest {
     // ----- ADD Track -----
     @PUT
     @Path("addT2U/{idTrack}/{idUser}")
-    @Produces("application/json")
+    @Produces("text/html")
     public String addT2U(@PathParam("idTrack") Long idTrack, @PathParam("idUser") Long idUser) {
-    	System.out.println("Retrieving Track N°" + idTrack + " for User N°" +  idUser);
+    	System.out.println("Retrieving Track N°" + idTrack + " and User N°" +  idUser);
     	User user	= userDao.read(idUser);
     	Track track	= trackDao.read(idTrack);
     	System.out.println("Adding Track N°" + idTrack + ": '" + track.getTitle() + "' to User N°" +  idUser + ": '" + user.getUsername() + "'");
     	user.getTracks().add(track);
+    	System.out.println("Adding  User N°" +  idUser + ": '" + user.getUsername() + "' to Track N°" + idTrack + ": '" + track.getTitle() + "'");
     	track.getUsers().add(user);
     	userDao.merge(user);
     	trackDao.merge(track);
@@ -151,16 +152,17 @@ public class PostmanRequest {
     }
     
     // ----- DEL Track -----
-    @PUT
+    @DELETE
     @Path("delT2U/{idTrack}/{idUser}")
-    @Produces("application/json")
+    @Produces("text/html")
     public String delT2U(@PathParam("idTrack") Long idTrack, @PathParam("idUser") Long idUser) {
-    	System.out.println("Retrieving Track N°" + idTrack + " for User N°" +  idUser);
+    	System.out.println("Retrieving Track N°" + idTrack + " and User N°" +  idUser);
     	User user 	= userDao.read(idUser);
     	Track track = trackDao.read(idTrack);
     	System.out.println("Deleting Track N°" + idTrack + ": '" + track.getTitle() + "' from User N°" +  idUser + ": '" + user.getUsername() + "'");
-    	user.getTracks().remove(user.getTracks().indexOf(track));
-    	track.getUsers().remove(track.getUsers().indexOf(user));
+    	user.getTracks().remove(track);
+    	System.out.println("Deleting  User N°" +  idUser + ": '" + user.getUsername() + "' from Track N°" + idTrack + ": '" + track.getTitle() + "'");
+    	track.getUsers().remove(user);
     	userDao.merge(user);
     	trackDao.merge(track);
         return track.getTitle() + " was removed from " + user.getUsername();
@@ -171,13 +173,14 @@ public class PostmanRequest {
     // ----- ADD User -----
     @PUT
     @Path("addU2T/{idUser}/{idTrack}")
-    @Produces("application/json")
+    @Produces("text/html")
     public String addU2T(@PathParam("idUser") Long idUser, @PathParam("idTrack") Long idTrack) {
-    	System.out.println("Adding User N°" + idUser + " to Track N°" +  idTrack);
+    	System.out.println("Retrieving User N°" + idUser + " and Track N°" +  idTrack);
     	User user	= userDao.read(idUser);
     	Track track	= trackDao.read(idTrack);
     	System.out.println("Adding  User N°" +  idUser + ": '" + user.getUsername() + "' to Track N°" + idTrack + ": '" + track.getTitle() + "'");
     	user.getTracks().add(track);
+    	System.out.println("Adding Track N°" + idTrack + ": '" + track.getTitle() + "' to User N°" +  idUser + ": '" + user.getUsername() + "'");
     	track.getUsers().add(user);
     	userDao.merge(user);
     	trackDao.merge(track);
@@ -185,16 +188,17 @@ public class PostmanRequest {
     }
     
     // ----- DEL User -----
-    @PUT
+    @DELETE
     @Path("delU2T/{idUser}/{idTrack}")
-    @Produces("application/json")
+    @Produces("text/html")
     public String delU2T(@PathParam("idUser") Long idUser, @PathParam("idTrack") Long idTrack) {
-    	System.out.println("Deleting User N°" +  idUser + " from Track N°" + idTrack);
+    	System.out.println("Retrieving User N°" +  idUser + " and Track N°" + idTrack);
     	User user 	= userDao.read(idUser);
     	Track track = trackDao.read(idTrack);
     	System.out.println("Deleting  User N°" +  idUser + ": '" + user.getUsername() + "' from Track N°" + idTrack + ": '" + track.getTitle() + "'");
-    	user.getTracks().remove(user.getTracks().indexOf(track));
-    	track.getUsers().remove(track.getUsers().indexOf(user));
+    	user.getTracks().remove(track);
+    	System.out.println("Deleting Track N°" + idTrack + ": '" + track.getTitle() + "' from User N°" +  idUser + ": '" + user.getUsername() + "'");
+    	track.getUsers().remove(user);
     	userDao.merge(user);
     	trackDao.merge(track);
         return user.getUsername() + " was removed from " + track.getTitle();
@@ -231,4 +235,3 @@ public class PostmanRequest {
     }
     
 }
-
