@@ -9,7 +9,7 @@
         <class>UserData.Track</class>
         <properties>
         
-            <property name="hibernate.connection.url" value="jdbc:h2:mem:MyTunesDB;DATABASE_TO_UPPER=false"/>
+            <property name="hibernate.connection.url" value="jdbc:h2:mem:MyTunesDB;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;DATABASE_TO_UPPER=false"/>
             <property name="dialect" value="org.hibernate.dialect.H2Dialect"/>
             <property name="hibernate.connection.driver_class" value="org.h2.Driver"/>
             <property name="hibernate.connection.username" value="sa"/>

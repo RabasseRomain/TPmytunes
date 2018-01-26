@@ -35,6 +35,7 @@ public class UserDAO{
     	oldUser.setUsername(newUser.getUsername ());
     	oldUser.setEmail(newUser.getEmail());
     	oldUser.setPassword(newUser.getPassword());  	
+    	em.merge(oldUser);
     }
     
     // ----- Delete -----
@@ -43,16 +44,6 @@ public class UserDAO{
     }
 	
 	// ----- MISC -------------------------------
-	
-    // ----- Merge -----
-    public void merge(User user) {
-    	em.merge(user);
-    }
-    
-    // ----- Persist -----
-    public void saveU(User user) {
-    	em.persist(user);
-    }
     
     // ----- List -----
     @SuppressWarnings("unchecked")
@@ -60,20 +51,24 @@ public class UserDAO{
 		return em.createQuery("SELECT u FROM User u").getResultList();
 	}
     
-    // ----- Add Track -----
-    public void addT(Long idUser, Long idTrack) {
+    // ----- Add Track to User -----
+    public void addT2U(Long idUser, Long idTrack) {
     	User user	= read(idUser);
     	Track track	= em.find(Track.class, idTrack);
     	user.getTracks().add(track);
     	track.getUsers().add(user);
+    	em.merge(user);
+    	em.merge(track);
     }
     
-    // ----- Del Track -----
-    public void delT(Long idUser, Long idTrack) {
+    // ----- Del Track From User -----
+    public void delTFU(Long idUser, Long idTrack) {
     	User user 	= read(idUser);
     	Track track = em.find(Track.class, idTrack);
     	user.getTracks().remove(user.getTracks().indexOf(track));
     	track.getUsers().remove(track.getUsers().indexOf(user));
+    	em.merge(user);
+    	em.merge(track);
     }
     
 }
