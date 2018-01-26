@@ -45,7 +45,12 @@ public class TrackDAO{
     // ----- Merge -----
     public void merge(Track track) {
     	em.merge(track);
-    }    
+    }
+    
+    // ----- Persist -----
+    public void saveT(Track track) {
+    	em.persist(track);
+    }
     
     // ----- List -----
     @SuppressWarnings("unchecked")

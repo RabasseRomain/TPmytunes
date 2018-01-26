@@ -14,7 +14,7 @@ import UserData.Track;
 import UserBack.UserDAO;
 import UserBack.TrackDAO;
 
-@Path("MyTunes")
+@Path("MyTunesDB")
 public class RequesterREST {
 	
 	@EJB
@@ -118,6 +118,9 @@ public class RequesterREST {
     @Produces("text/html")
     public String deleteUser(@PathParam("id") Long id) {
     	System.out.println("Deleting User N°" + id);
+    	/*for(Track track : trackDao.list()){
+    			delT2U(track.getId(), id);
+    	}*/
     	userDao.delete(id);
         return "User N°" + id + " was deleted.";
     }
@@ -128,6 +131,9 @@ public class RequesterREST {
     @Produces("text/html")
     public String deleteTrack(@PathParam("id") Long id) {
     	System.out.println("Deleting Track N°" + id);
+    	/*for(User user : userDao.list()) {
+    		delT2U(id, user.getId());
+    	}*/
     	trackDao.delete(id);
         return "Track N°" + id + "  was deleted.";
     }
@@ -142,67 +148,42 @@ public class RequesterREST {
     	System.out.println("Retrieving Track N°" + idTrack + " and User N°" +  idUser);
     	User user	= userDao.read(idUser);
     	Track track	= trackDao.read(idTrack);
-    	System.out.println("Adding Track N°" + idTrack + ": '" + track.getTitle() + "' to User N°" +  idUser + ": '" + user.getUsername() + "'");
+    	
+    	System.out.println("Adding Track N°" + track.getId() + ": '" + track.getTitle() + "' to User N°" +  user.getId() + ": '" + user.getUsername() + "'");
     	user.getTracks().add(track);
-    	System.out.println("Adding  User N°" +  idUser + ": '" + user.getUsername() + "' to Track N°" + idTrack + ": '" + track.getTitle() + "'");
+    	System.out.println("Adding  User N°" +  user.getId() + ": '" + user.getUsername() + "' to Track N°" + track.getId() + ": '" + track.getTitle() + "'");
     	track.getUsers().add(user);
+    	
     	userDao.merge(user);
     	trackDao.merge(track);
         return track.getTitle() + " was added to " + user.getUsername();
     }
     
     // ----- DEL Track -----
-    @DELETE
+    @PUT
     @Path("delT2U/{idTrack}/{idUser}")
     @Produces("text/html")
     public String delT2U(@PathParam("idTrack") Long idTrack, @PathParam("idUser") Long idUser) {
+    	
     	System.out.println("Retrieving Track N°" + idTrack + " and User N°" +  idUser);
     	User user 	= userDao.read(idUser);
     	Track track = trackDao.read(idTrack);
-    	System.out.println("Deleting Track N°" + idTrack + ": '" + track.getTitle() + "' from User N°" +  idUser + ": '" + user.getUsername() + "'");
+    	
+    	System.out.println("Deleting Track N°" + track.getId() + ": '" + track.getTitle() + "' from User N°" +  user.getId() + ": '" + user.getUsername() + "'");
+    	System.out.println(user.getTracks().size() + " tracks in " + user.getUsername());
+    	System.out.println(track.getUsers().size() + " users in " + track.getTitle());
+    	
     	user.getTracks().remove(track);
-    	System.out.println("Deleting  User N°" +  idUser + ": '" + user.getUsername() + "' from Track N°" + idTrack + ": '" + track.getTitle() + "'");
     	track.getUsers().remove(user);
-    	userDao.merge(user);
-    	trackDao.merge(track);
+    	userDao.saveU(user);
+    	trackDao.saveT(track);
+    	
+    	System.out.println("Deleting  User N°" +  user.getId() + ": '" + user.getUsername() + "' from Track N°" + track.getId() + ": '" + track.getTitle() + "'");
+    	System.out.println(user.getTracks().size() + " tracks in " + user.getUsername());
+    	System.out.println(track.getUsers().size() + " users in " + track.getTitle());
+    	
         return track.getTitle() + " was removed from " + user.getUsername();
-    }   
-    
-    // ----- ADD/DEL User TO/FROM Track --------------
-	  
-    // ----- ADD User -----
-    @PUT
-    @Path("addU2T/{idUser}/{idTrack}")
-    @Produces("text/html")
-    public String addU2T(@PathParam("idUser") Long idUser, @PathParam("idTrack") Long idTrack) {
-    	System.out.println("Retrieving User N°" + idUser + " and Track N°" +  idTrack);
-    	User user	= userDao.read(idUser);
-    	Track track	= trackDao.read(idTrack);
-    	System.out.println("Adding  User N°" +  idUser + ": '" + user.getUsername() + "' to Track N°" + idTrack + ": '" + track.getTitle() + "'");
-    	user.getTracks().add(track);
-    	System.out.println("Adding Track N°" + idTrack + ": '" + track.getTitle() + "' to User N°" +  idUser + ": '" + user.getUsername() + "'");
-    	track.getUsers().add(user);
-    	userDao.merge(user);
-    	trackDao.merge(track);
-        return user.getUsername() + " was added to " + track.getTitle();
-    }
-    
-    // ----- DEL User -----
-    @DELETE
-    @Path("delU2T/{idUser}/{idTrack}")
-    @Produces("text/html")
-    public String delU2T(@PathParam("idUser") Long idUser, @PathParam("idTrack") Long idTrack) {
-    	System.out.println("Retrieving User N°" +  idUser + " and Track N°" + idTrack);
-    	User user 	= userDao.read(idUser);
-    	Track track = trackDao.read(idTrack);
-    	System.out.println("Deleting  User N°" +  idUser + ": '" + user.getUsername() + "' from Track N°" + idTrack + ": '" + track.getTitle() + "'");
-    	user.getTracks().remove(track);
-    	System.out.println("Deleting Track N°" + idTrack + ": '" + track.getTitle() + "' from User N°" +  idUser + ": '" + user.getUsername() + "'");
-    	track.getUsers().remove(user);
-    	userDao.merge(user);
-    	trackDao.merge(track);
-        return user.getUsername() + " was removed from " + track.getTitle();
-    }   
+    }      
   
   	// ----- LIST -------------------------------
 	  

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
-import javax.persistence.CascadeType;
+//import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,7 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-@ManagedBean
 @Entity
 @Table
 public class Track implements Serializable {
@@ -31,7 +30,7 @@ public class Track implements Serializable {
 	private String title;
 	@Column
 	private String artist;
-	@ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER)	// cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, 
 	private List<User> users = new ArrayList<User>();	
 	
 	// ----- Constructor ------------------------

@@ -49,6 +49,11 @@ public class UserDAO{
     	em.merge(user);
     }
     
+    // ----- Persist -----
+    public void saveU(User user) {
+    	em.persist(user);
+    }
+    
     // ----- List -----
     @SuppressWarnings("unchecked")
 	public List<User> list() {
