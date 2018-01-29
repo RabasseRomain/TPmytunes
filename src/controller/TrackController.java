@@ -1,4 +1,4 @@
-package UserBack;
+package controller;
 
 import java.io.Serializable;
 import java.util.List;
@@ -7,7 +7,8 @@ import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 
-import UserData.Track;
+import dao.TrackDAO;
+import data.Track;
 
 @ManagedBean
 @RequestScoped
@@ -30,7 +31,7 @@ public class TrackController implements Serializable {
 	// ----- CRUD Functions ---------------------
 	
     public String add() {
-    	trackDao.add(track);
+    	trackDao.create(track);
         return "HomePage";
     }
     
@@ -39,7 +40,7 @@ public class TrackController implements Serializable {
     }
     
     public String edit(Long id) {
-    	trackDao.edit(id, track);
+    	trackDao.update(id, track);
         return "HomePage";
     }
     

@@ -1,4 +1,4 @@
-package UserFront;
+package rest;
 
 import javax.ejb.EJB;
 import javax.ws.rs.DELETE;
@@ -9,10 +9,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import UserData.User;
-import UserData.Track;
-import UserBack.UserDAO;
-import UserBack.TrackDAO;
+import dao.TrackDAO;
+import dao.UserDAO;
+import data.Track;
+import data.User;
 
 @Path("MyTunesDB")
 public class RequesterREST {
@@ -35,25 +35,25 @@ public class RequesterREST {
 	
     // ----- User -----
     @POST
-    @Path("addU/{username}/{email}/{password}")
+    @Path("createU/{username}/{email}/{password}")
     @Produces("text/html")
-    public String addUser(@PathParam("username") String username, @PathParam("email") String email, @PathParam("password") String password) {
+    public String createUser(@PathParam("username") String username, @PathParam("email") String email, @PathParam("password") String password) {
     	User user = new User();
     	user.setUsername(username);
     	user.setEmail(email);
     	user.setPassword(password);
-        userDao.add(user);
+        userDao.create(user);
         return "User '" + username + "' was created.";
     }
     // ----- Track -----
     @POST
-    @Path("addT/{title}/{artist}")
+    @Path("createT/{title}/{artist}")
     @Produces("text/html")
-    public String addTrack(@PathParam("title") String title, @PathParam("artist") String artist) {
+    public String createTrack(@PathParam("title") String title, @PathParam("artist") String artist) {
     	Track track = new Track();
     	track.setTitle(title);
     	track.setArtist(artist);
-        trackDao.add(track);
+        trackDao.create(track);
         return "Track - " + title + " - was created";
     }
     
@@ -61,17 +61,17 @@ public class RequesterREST {
 	
     // ----- User -----
     @GET
-    @Path("showU/{id}")
+    @Path("readU/{id}")
     @Produces("text/html")
-    public String showUser(@PathParam("id") Long id) {
+    public String readUser(@PathParam("id") Long id) {
     	return userDao.read(id).toString();
     }
     
     // ----- Track -----
     @GET
-    @Path("showT/{id}")
+    @Path("readT/{id}")
     @Produces("text/html")
-    public String showTrack(@PathParam("id") Long id) {
+    public String readTrack(@PathParam("id") Long id) {
     	return trackDao.read(id).toString();
     }
     
@@ -86,19 +86,19 @@ public class RequesterREST {
     	user.setUsername(username);
     	user.setEmail(email);
     	user.setPassword(password);
-        userDao.edit(id, user);
+        userDao.update(id, user);
         return username.toString();
     }
     
     // ----- Track -----
     @PUT
-    @Path("addT/{id}/{title}/{artist}")
+    @Path("updateT/{id}/{title}/{artist}")
     @Produces("text/html")
     public String updateTrack(@PathParam("id") Long id, @PathParam("title") String title, @PathParam("artist") String artist) {
     	Track track = new Track();
     	track.setTitle(title);
     	track.setArtist(artist);
-        trackDao.edit(id, track);
+        trackDao.update(id, track);
         return track.toString();
     }
     
@@ -110,7 +110,7 @@ public class RequesterREST {
     @Produces("text/html")
     public String deleteUser(@PathParam("id") Long id) {
     	for(Track track : trackDao.list()){
-    			delT2U(track.getId(), id);
+    			deleteTrackFromUser(track.getId(), id);
     	}
     	userDao.delete(id);
         return "User N°" + id + " was deleted.";
@@ -122,7 +122,7 @@ public class RequesterREST {
     @Produces("text/html")
     public String deleteTrack(@PathParam("id") Long id) {
     	for(User user : userDao.list()) {
-    		delT2U(id, user.getId());
+    		deleteTrackFromUser(id, user.getId());
     	}
     	trackDao.delete(id);
         return "Track N°" + id + "  was deleted.";
@@ -134,7 +134,7 @@ public class RequesterREST {
     @PUT
     @Path("addT2U/{idTrack}/{idUser}")
     @Produces("text/html")
-    public String addT2U(@PathParam("idTrack") Long idTrack, @PathParam("idUser") Long idUser) {
+    public String addTrackToUser(@PathParam("idTrack") Long idTrack, @PathParam("idUser") Long idUser) {
     	userDao.addT2U(idTrack, idUser);
         return "Track N°" + idTrack + " was added to User N°" + idUser + ".";
     }
@@ -143,7 +143,7 @@ public class RequesterREST {
     @PUT
     @Path("delTFU/{idTrack}/{idUser}")
     @Produces("text/html")
-    public String delT2U(@PathParam("idTrack") Long idTrack, @PathParam("idUser") Long idUser) {
+    public String deleteTrackFromUser(@PathParam("idTrack") Long idTrack, @PathParam("idUser") Long idUser) {
     	userDao.addT2U(idTrack, idUser);
         return "Track N°" + idTrack + " was removed from User N°" + idUser + ".";
     }      

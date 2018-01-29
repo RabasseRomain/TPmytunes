@@ -1,4 +1,4 @@
-package UserData;
+package data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class User implements Serializable {
 	private String email;
 	@Column
 	private String password;
-	@ManyToMany(mappedBy = "users", fetch = FetchType.EAGER) //cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, 
+	@ManyToMany(fetch = FetchType.EAGER)
 	private List<Track> tracks = new ArrayList<Track>();	
 	
 	// ----- Constructor ------------------------

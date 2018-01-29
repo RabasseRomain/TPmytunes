@@ -1,4 +1,4 @@
-package UserData;
+package data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class Track implements Serializable {
 	private String title;
 	@Column
 	private String artist;
-	@ManyToMany(fetch = FetchType.EAGER)	// cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, 
+	@ManyToMany(fetch = FetchType.EAGER)
 	private List<User> users = new ArrayList<User>();	
 	
 	// ----- Constructor ------------------------

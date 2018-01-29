@@ -1,4 +1,4 @@
-package UserBack;
+package dao;
 
 import java.util.List;
 
@@ -6,8 +6,8 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import UserData.Track;
-import UserData.User;
+import data.Track;
+import data.User;
 
 @Stateless
 public class UserDAO{
@@ -20,7 +20,7 @@ public class UserDAO{
 	// ----- CRUD -------------------------------
 	
     // ----- Create -----
-    public void add(User user) {
+    public void create(User user) {
         em.persist(user);
     }
     
@@ -30,12 +30,12 @@ public class UserDAO{
 	}
     
     // ----- Update -----
-    public void edit(Long id, User newUser) {
+    public void update(Long id, User newUser) {
     	User oldUser = em.find(User.class, id);
     	oldUser.setUsername(newUser.getUsername ());
     	oldUser.setEmail(newUser.getEmail());
     	oldUser.setPassword(newUser.getPassword());  	
-    	em.merge(oldUser);
+    	//em.merge(oldUser);
     }
     
     // ----- Delete -----
@@ -57,8 +57,8 @@ public class UserDAO{
     	Track track	= em.find(Track.class, idTrack);
     	user.getTracks().add(track);
     	track.getUsers().add(user);
-    	em.merge(user);
-    	em.merge(track);
+    	//em.merge(user);
+    	//em.merge(track);
     }
     
     // ----- Del Track From User -----
@@ -67,8 +67,8 @@ public class UserDAO{
     	Track track = em.find(Track.class, idTrack);
     	user.getTracks().remove(user.getTracks().indexOf(track));
     	track.getUsers().remove(track.getUsers().indexOf(user));
-    	em.merge(user);
-    	em.merge(track);
+    	//em.merge(user);
+    	//em.merge(track);
     }
     
 }

@@ -5,8 +5,8 @@
 	
 	<persistence-unit name="TPmytunes">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <class>UserData.User</class>
-        <class>UserData.Track</class>
+        <class>data.User</class>
+        <class>data.Track</class>
         <properties>
         
             <property name="hibernate.connection.url" value="jdbc:h2:mem:MyTunesDB;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;DATABASE_TO_UPPER=false"/>

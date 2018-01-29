@@ -1,4 +1,4 @@
-package UserBack;
+package dao;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import UserData.Track;
+import data.Track;
 
 @Stateless
 public class TrackDAO{
@@ -19,7 +19,7 @@ public class TrackDAO{
 	// ----- CRUD -------------------------------
 	
     // ----- Create -----
-    public void add(Track track) {
+    public void create(Track track) {
         em.persist(track);
     }
 
@@ -29,10 +29,11 @@ public class TrackDAO{
 	}
 
     // ----- Update -----
-    public void edit(Long id, Track newTrack) {
+    public void update(Long id, Track newTrack) {
     	Track oldTrack = em.find(Track.class, id);
     	oldTrack.setTitle(newTrack.getTitle());
-    	oldTrack.setArtist(newTrack.getArtist());	
+    	oldTrack.setArtist(newTrack.getArtist());
+    	//em.merge(oldTrack);
     }
     
     // ----- Delete -----

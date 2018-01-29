@@ -1,4 +1,4 @@
-package UserBack;
+package controller;
 
 import java.io.Serializable;
 import java.util.List;
@@ -7,7 +7,8 @@ import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 
-import UserData.User;
+import dao.UserDAO;
+import data.User;
 
 @ManagedBean
 @RequestScoped
@@ -30,7 +31,7 @@ public class UserController implements Serializable {
 	// ----- CRUD Functions ---------------------
 	
     public String add() {
-    	userDao.add(user);
+    	userDao.create(user);
         return "HomePage";
     }
     
@@ -39,7 +40,7 @@ public class UserController implements Serializable {
     }
     
     public String edit(Long id) {
-    	userDao.edit(id, user);
+    	userDao.update(id, user);
         return "HomePage";
     }
     
